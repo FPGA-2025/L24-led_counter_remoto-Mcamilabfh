@@ -1,25 +1,23 @@
 module Counter #(
-    parameter CLK_FREQ = 25_000_000 
+    parameter CLK_FREQ = 25_000_000
 ) (
     input  wire clk,
-    input  wire rst_n, //Ativo em 0
+    input  wire rst_n,
     output reg [7:0] leds
 );
 
-localparam ONE_SECOND = CLK_FREQ;
-
 reg [31:0] counter;
 
-always @(posedge clk) begin
+always @(posedge clk or negedge rst_n) begin
     if (!rst_n) begin
-        leds <= 8'b0;
-        counter <= 32'h0;
+        counter <= 0;
+        leds    <= 0;
     end else begin
-        if(counter == ONE_SECOND -1) begin
-            counter <= 32'h0;
-            leds <= leds +1;
+        if (counter == (CLK_FREQ / 2) - 1) begin
+            counter <= 0;
+            leds    <= leds + 1;
         end else begin
-            counter <= counter +1;
+            counter <= counter + 1;
         end
     end
 end
